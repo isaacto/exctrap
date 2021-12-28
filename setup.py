@@ -5,7 +5,7 @@ with open('README.md', 'r') as fh:
 
 setuptools.setup(
     name='exctrap',
-    version='0.0.1',
+    version='0.1',
     python_requires='~=3.7',
     author='Isaac To',
     author_email='isaac.to@gmail.com',
