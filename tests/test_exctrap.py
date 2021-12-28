@@ -73,3 +73,19 @@ def test_trial_raises_mock_sleep_noisy() -> None:
         if arg > 2.9:
             found_large = True
     assert found_small and found_large
+
+
+def test_trial_raises_mock_sleep_backoff() -> None:
+    lst: typing.List[int] = []
+    with patch('time.sleep') as mock_sleep:
+        with pytest.raises(RuntimeError):
+            for cnt, etrapper in enumerate(exctrap.trial(6,
+                                                         retry_period=1.,
+                                                         period_noise=0,
+                                                         backoff=2)):
+                with etrapper:
+                    lst.append(cnt)
+                    raise RuntimeError()
+    assert mock_sleep.mock_calls == [call(1.), call(2.), call(4.),
+                                     call(4.), call(4.)]
+    assert lst == list(range(6))

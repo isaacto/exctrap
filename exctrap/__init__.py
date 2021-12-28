@@ -77,8 +77,9 @@ class ExcTrapper:
 
 
 def trial(
-        num_tries: int = 3, retry_period: float = 3,
+        num_tries: int = 3, retry_period: float = 3, *,
         period_noise: float = 0.25,
+        backoff: int = 0, backoff_ratio: float = 2,
         etypes: typing.Tuple[typing.Type[BaseException], ...] = (Exception,)
 ) -> typing.Iterator[ExcTrapper]:
     """Retry logic
@@ -103,11 +104,20 @@ def trial(
         period_noise: Add or subtract at most this fraction of the
             retry_period to get the actual amount of seconds to sleep.
 
+        backoff: Change (normally, increase) retry_period this many
+            times from the second trial.  After that the retry_period
+            will stay the same as the last one.
+
+        backoff_ratio: When changing the retry_period, multiply by
+            this number.
+
         etypes: Exception types to trap.  Other exceptions are raised
             directly without attempts for retry.
     """
     for cnt in range(num_tries):
         if cnt:
+            if 1 < cnt < backoff + 2:
+                retry_period *= backoff_ratio
             rnum = random.uniform(1 - period_noise, 1 + period_noise)
             time.sleep(max(rnum * retry_period, 0))
         etrapper = ExcTrapper(etypes)
