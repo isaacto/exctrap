@@ -1,0 +1,2 @@
+# exctrap
+Python exception trapper
