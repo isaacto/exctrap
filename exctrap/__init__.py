@@ -27,6 +27,9 @@ import types
 import typing
 
 
+__version__ = '0.2'
+
+
 class ExcTrapper:
     """Trap exceptions.
 
@@ -46,11 +49,11 @@ class ExcTrapper:
     """
     def __init__(
             self,
-            etypes: typing.Tuple[typing.Type[BaseException], ...] = (Exception,)
+            etypes: tuple[typing.Type[BaseException], ...] = (Exception,)
     ):
         self._etypes = etypes
         self.exc: typing.Optional[
-            typing.Tuple[BaseException, types.TracebackType]
+            tuple[BaseException, types.TracebackType]
         ] = None
 
     def __enter__(self) -> None:
@@ -76,11 +79,11 @@ class ExcTrapper:
             raise self.exc[0].with_traceback(self.exc[1])
 
 
-def trial(
+def trial(  # pylint: disable=too-many-arguments
         num_tries: int = 3, retry_period: float = 3, *,
         period_noise: float = 0.25,
         backoff: int = 0, backoff_ratio: float = 2,
-        etypes: typing.Tuple[typing.Type[BaseException], ...] = (Exception,)
+        etypes: tuple[typing.Type[BaseException], ...] = (Exception,)
 ) -> typing.Iterator[ExcTrapper]:
     """Retry logic
 
